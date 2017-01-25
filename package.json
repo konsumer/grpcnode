@@ -1,0 +1,36 @@
+{
+  "name": "grpcnode",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "./server.js example/helloworld.proto example/helloworld.js",
+    "release": "release-it"
+  },
+  "bin": {
+    "grpc-server": "server.js",
+    "grpc-client": "client.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/konsumer/grpcnode.git"
+  },
+  "author": "David Konsumer <konsumer@jetboystudio.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/konsumer/grpcnode/issues"
+  },
+  "homepage": "https://github.com/konsumer/grpcnode#readme",
+  "dependencies": {
+    "grpc": "^1.0.1",
+    "yargs": "^6.6.0"
+  },
+  "devDependencies": {
+    "release-it": "^2.5.3"
+  },
+  "keywords": [
+    "grpc",
+    "api",
+    "protobuf"
+  ]
+}
