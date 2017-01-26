@@ -5,7 +5,6 @@ const grpc = require('grpc')
 
 const run = (protoFile, host, method, params) => {
   return new Promise((resolve, reject) => {
-    const input = params ? JSON.parse(params) : undefined
     const proto = grpc.load(protoFile)
     const {0: pkg, 1: svc, 2: action} = method.split('.')
     const client = new proto[pkg][svc](host, grpc.credentials.createInsecure())
@@ -28,7 +27,7 @@ const main = () => {
     .example(`$0 run example.proto helloworld.Greeter.sayHello '{"name": "World"}'`, 'Run helloworld.Greeter.sayHello({name:"World"}) from a server at localhost:5051, defined by api.proto')
     .example('$0 ls api.proto', 'List available RPC methods, defined by api.proto')
 
-    .command('run [proto-file] [method] [arguments]', 'Run an RPC command', {
+    .command('run [proto-file] [method] <arguments>', 'Run an RPC command', {
       host: {
         describe: 'The host:port where the gRPC server is running',
         default: 'localhost:5051'
@@ -52,7 +51,7 @@ const main = () => {
   }
 
   if (argv._[0] === 'run') {
-    run(argv.protoFile, argv.host, argv.method, argv.arguments)
+    run(argv.protoFile, argv.host, argv.method, argv.arguments ? JSON.parse(argv.arguments) : undefined)
       .then(r => { console.log(JSON.stringify(r, null, 2)) })
       .catch(e => {
         console.error(e)
