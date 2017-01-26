@@ -14,7 +14,7 @@ Now, you can use it like this:
 ### examples
 
 - Get a list of methods/message-types: `grpc-client ls example/helloworld.proto`
-- Run an RPC on server: `grpc-client run example/helloworld.proto -m elloworld.Greeter.sayHello -a '{"name": "World"}'`
+- Run an RPC on server: `grpc-client run example/helloworld.proto -m helloworld.Greeter.sayHello -a '{"name": "World"}'`
 - Start a server: `grpc-server example/*.js example/*.proto`
 
 ## in your code
