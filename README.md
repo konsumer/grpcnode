@@ -1,6 +1,6 @@
 # Simple node-based gRPC client/server
 
-When you want a quick gRPC server, made with node.
+When you want a quick gRPC server or client, made with node.
 
 Install with `npm i -g grpcnode`.
 
