@@ -10,7 +10,7 @@ Now, you can use it like this:
 
 - `grpc-client -?` - get help on using client
 - `grpc-server -?` - get help on using server
-- `grpc-client run example/helloworld.proto helloworld.Greeter.sayHello '{"name":"World"}'` - run `helloworld.Greeter.sayHello` RPC
+- `grpc-client run example/helloworld.proto -m helloworld.Greeter.sayHello -a '{"name": "World"}'` - run `helloworld.Greeter.sayHello` RPC
 - `grpc-server example/*.proto example/*.js` - run a server made of several proto & js files
 
 ## in your code

@@ -36,13 +36,23 @@ const main = () => {
     .help('?')
     .alias('?', 'help')
     .example('$0 run -?', 'Get help on running an RPC method')
-    .example(`$0 run example.proto helloworld.Greeter.sayHello '{"name": "World"}'`, 'Run helloworld.Greeter.sayHello({name:"World"}) from a server at localhost:5051, defined by api.proto')
+    .example(`$0 run example.proto -m helloworld.Greeter.sayHello -a '{"name": "World"}'`, 'Run helloworld.Greeter.sayHello({name:"World"}) from a server at localhost:5051, defined by api.proto')
     .example('$0 ls api.proto', 'List available RPC methods, defined by api.proto')
 
-    .command('run [proto-file] [method] <arguments>', 'Run an RPC command', {
+    .command('run [proto-file]', 'Run an RPC command', {
       host: {
         describe: 'The host:port where the gRPC server is running',
         default: 'localhost:5051'
+      },
+      arguments: {
+        describe: 'JSON-encoded arguments',
+        required: true,
+        alias: 'a'
+      },
+      method: {
+        describe: 'The remote-method to call',
+        required: true,
+        alias: 'm'
       }
     })
 
