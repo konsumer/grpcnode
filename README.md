@@ -62,7 +62,7 @@ const grpcnode = require('grpcnode').client
 grpcnode.run('api.proto', 'localhost:5051', 'helloworld.Greeter.sayHello', {name:'World'})
   .then(response => { console.log(response) })
 
-// list remote commands
+// list available RPC & Messages
 console.log(grpcnode.ls('api.proto'))
 
 ```
