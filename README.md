@@ -2,6 +2,8 @@
 
 When you want a quick gRPC server or client, made with node.
 
+[![NPM](https://nodei.co/npm/grpcnode.png?compact=true)](https://nodei.co/npm/grpcnode/)
+
 ## cli
 
 Install with `npm i -g grpcnode`.
