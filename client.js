@@ -8,7 +8,7 @@ const run = (protoFile, host, method, params) => {
     const proto = grpc.load(protoFile)
     const {0: pkg, 1: svc, 2: action} = method.split('.')
     const client = new proto[pkg][svc](host, grpc.credentials.createInsecure())
-    client[action](input, (err, res) => {
+    client[action](params, (err, res) => {
       if (err) return reject(err)
       resolve(res)
     })
@@ -16,6 +16,18 @@ const run = (protoFile, host, method, params) => {
 }
 
 const ls = (protoFile) => {
+  const proto = grpc.load(protoFile)
+  const info = {services: {}, messages: []}
+  Object.keys(proto).forEach(ns => {
+    Object.keys(proto[ns]).forEach(svc => {
+      if (proto[ns][svc].service) {
+        info.services[`${ns}.${svc}`] = proto[ns][svc].service.children.map(r => r.name)
+      } else {
+        info.messages.push(`${ns}.${svc}`)
+      }
+    })
+  })
+  return info
 }
 
 const main = () => {
@@ -58,12 +70,17 @@ const main = () => {
         process.exit(1)
       })
   } else {
-    ls(argv.protoFile)
-      .then(r => { console.log(JSON.stringify(r, null, 2)) })
-      .catch(e => {
-        console.error(e)
-        process.exit(1)
+    const info = ls(argv.protoFile)
+    console.log('Available Methods:')
+    Object.keys(info.services).forEach(ns => {
+      info.services[ns].forEach(method => {
+        console.log(`  ${ns}.${method}`)
       })
+    })
+    console.log('\nAvailable Message-types:')
+    info.messages.forEach(msg => {
+      console.log(`  ${msg}`)
+    })
   }
 }
 

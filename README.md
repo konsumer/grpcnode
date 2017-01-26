@@ -38,8 +38,7 @@ grpcnode.run('api.proto', 'localhost:5051', 'helloworld.Greeter.sayHello', {name
   .then(response => { console.log(response) })
 
 // list remote commands
-grpcnode.ls('api.proto')
-  .then(response => { console.log(response) })
+console.log(grpcnode.ls('api.proto'))
 
 ```
 
