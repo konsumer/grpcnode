@@ -11,6 +11,9 @@ const grpc = require('grpc')
  * @return {GRPCServer}          The gRPC server
  */
 const buildProtoServer = (protoFiles, methods) => {
+  if (!Array.isArray(protoFiles)) {
+    protoFiles = [protoFiles]
+  }
   const server = new grpc.Server()
   protoFiles.forEach(p => {
     const proto = grpc.load(p)
@@ -19,7 +22,9 @@ const buildProtoServer = (protoFiles, methods) => {
         if (proto[p][t].service) {
           const methodImplementations = {}
           proto[p][t].service.children.forEach(c => {
-            methodImplementations[c.name] = methods[p][t][c.name]
+            if (typeof methods[p][t][c.name] === 'function') {
+              methodImplementations[c.name] = methods[p][t][c.name]
+            }
           })
           server.addProtoService(proto[p][t].service, methodImplementations)
         }
