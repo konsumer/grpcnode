@@ -26,7 +26,26 @@ Install in your project with `npm i -S grpcnode`.
 ```js
 const grpcnode = require('grpcnode').server
 
-const server = grpcnode(['api.proto'], ['api.js'])
+function sayHello (call, callback) {
+  const message = `Hello ${call.request.name}`
+  callback(null, {message})
+}
+
+function sayGoodbye (call, callback) {
+  const message = `Goodbye ${call.request.name}`
+  callback(null, {message})
+}
+
+const implementation = {
+  helloworld: {
+    Greeter: {
+      sayHello,
+      sayGoodbye
+    }
+  }
+}
+
+const server = grpcnode(['api.proto'], implementation)
 server.bind('0.0.0.0:' + argv.port, grpc.ServerCredentials.createInsecure())
 console.log('gRPC protobuf server started on 0.0.0.0:' + argv.port)
 server.start()

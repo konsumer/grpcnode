@@ -7,11 +7,10 @@ const grpc = require('grpc')
 /**
  * Create a gRPC server from several proto and js files
  * @param  {string[]} protoFiles Array of filenames that should be merged into definition
- * @param  {string[]} jsFiles    Array of filenames that should be merged into implementation
+ * @param  {Object} methods      JS implementations of your RPCs, in same structure as they are in protos
  * @return {GRPCServer}          The gRPC server
  */
-const buildProtoServer = (protoFiles, jsFiles) => {
-  const methods = Object.assign({}, ...jsFiles.map(f => require(path.resolve(f))))
+const buildProtoServer = (protoFiles, methods) => {
   const server = new grpc.Server()
   protoFiles.forEach(p => {
     const proto = grpc.load(p)
@@ -55,7 +54,7 @@ const main = () => {
     process.exit(1)
   }
 
-  const server = buildProtoServer(protoFiles, jsFiles)
+  const server = buildProtoServer(protoFiles, Object.assign({}, ...jsFiles.map(f => require(path.resolve(f)))))
   server.bind('0.0.0.0:' + argv.port, grpc.ServerCredentials.createInsecure())
   console.log('gRPC protobuf server started on 0.0.0.0:' + argv.port)
   server.start()
