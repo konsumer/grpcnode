@@ -17,13 +17,13 @@ const run = (protoFile, host, method, params) => {
 
 const ls = (protoFile) => {
   const proto = grpc.load(protoFile)
-  const info = {services: {}, messages: []}
+  const info = {services: {}, messages: {}}
   Object.keys(proto).forEach(ns => {
     Object.keys(proto[ns]).forEach(svc => {
       if (proto[ns][svc].service) {
         info.services[`${ns}.${svc}`] = proto[ns][svc].service.children.map(r => r.name)
       } else {
-        info.messages.push(`${ns}.${svc}`)
+        info.messages[`${ns}.${svc}`] = JSON.stringify(proto[ns][svc].decode(proto[ns][svc].encode({})))
       }
     })
   })
@@ -81,15 +81,15 @@ const main = () => {
       })
   } else {
     const info = ls(argv.protoFile)
-    console.log('Available Methods:')
+    console.log('Methods:')
     Object.keys(info.services).forEach(ns => {
       info.services[ns].forEach(method => {
         console.log(`  ${ns}.${method}`)
       })
     })
-    console.log('\nAvailable Message-types:')
-    info.messages.forEach(msg => {
-      console.log(`  ${msg}`)
+    console.log('\nMessage-types:')
+    Object.keys(info.messages).forEach(msg => {
+      console.log(`  ${msg}: ${info.messages[msg]}`)
     })
   }
 }
