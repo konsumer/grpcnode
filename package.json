@@ -1,11 +1,11 @@
 {
   "name": "grpcnode",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "./server.js example/helloworld.proto example/helloworld.js",
-    "release": "release-it"
+    "release": "release-it -p -n"
   },
   "bin": {
     "grpc-server": "server.js",
