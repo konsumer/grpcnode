@@ -1,7 +1,9 @@
 syntax = "proto3";
 package helloworld;
 
-import "google/api/annotations.proto";
+// intentionally commented to deal with this:
+// https://github.com/dcodeIO/protobuf.js/issues/368
+// import "google/api/annotations.proto";
 
 // The greeting service definition.
 service Greeter {
