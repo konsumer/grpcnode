@@ -3,12 +3,6 @@
 const path = require('path')
 const yargs = require('yargs')
 const grpc = require('grpc')
-const protobuf = require('protobufjs')
-
-// inner util for ignoring google rpc annotations
-const ignoreAnnotations = (protoFile) => {
-  protobuf.common(`${path.dirname(protoFile)}/google/api/annotations.proto`, {})
-}
 
 /**
  * Create a gRPC server from several proto and js files
@@ -73,8 +67,6 @@ const main = () => {
     yargs.showHelp()
     process.exit(1)
   }
-
-  protoFiles.forEach(p => ignoreAnnotations(p))
 
   const server = buildProtoServer(protoFiles, Object.assign({}, ...jsFiles.map(f => require(path.resolve(f)))))
   server.bind('0.0.0.0:' + argv.port, grpc.ServerCredentials.createInsecure())

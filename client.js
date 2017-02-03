@@ -3,12 +3,6 @@
 const yargs = require('yargs')
 const grpc = require('grpc')
 const path = require('path')
-const protobuf = require('protobufjs')
-
-// inner util for ignoring google rpc annotations
-const ignoreAnnotations = (protoFile) => {
-  protobuf.common(`${path.dirname(protoFile)}/google/api/annotations.proto`, {})
-}
 
 const run = (protoFile, host, method, params) => {
   return new Promise((resolve, reject) => {
@@ -103,8 +97,6 @@ const main = () => {
     yargs.showHelp()
     process.exit(1)
   }
-
-  ignoreAnnotations(argv.protoFile)
 
   switch (argv._[0]) {
     case 'run':
