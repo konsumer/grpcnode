@@ -34,11 +34,12 @@ const generate = (protoFile) => {
   const proto = grpc.load(protoFile)
   let out = ''
   Object.keys(proto).forEach(ns => {
+    out += `module.exports.${ns} = {}\n`
     Object.keys(proto[ns]).forEach(svc => {
       if (proto[ns][svc].service) {
-        out += `module.exports.${svc} = {}\n`
+        out += `module.exports.${ns}.${svc} = {}\n`
         proto[ns][svc].service.children.forEach(r => {
-          out += `\nmodule.exports.${svc}.${r.name} = (ctx, cb) => {\n  // do stuff with ctx.request\n  // cb(err, response)\n}\n`
+          out += `\nmodule.exports.${ns}.${svc}.${r.name} = (ctx, cb) => {\n  // do stuff with ctx.request\n  // cb(err, response)\n}\n`
         })
       }
     })
