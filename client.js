@@ -21,7 +21,11 @@ const ls = (protoFile) => {
   Object.keys(proto).forEach(ns => {
     Object.keys(proto[ns]).forEach(svc => {
       if (proto[ns][svc].service) {
-        info.services[`${ns}.${svc}`] = proto[ns][svc].service.children.map(r => r.name)
+        info.services[`${ns}.${svc}`] = proto[ns][svc].service.children.map(r => {
+          const cin = r.requestStream ? '~' : ''
+          const cout = r.responseStream ? '~' : ''
+          return `${r.name}(${cin}${r.requestName}) → ${cout}${r.responseName}`
+        })
       } else {
         info.messages[`${ns}.${svc}`] = JSON.stringify(proto[ns][svc].decode(proto[ns][svc].encode({})))
       }
