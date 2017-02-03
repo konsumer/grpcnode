@@ -2,7 +2,6 @@
 
 const yargs = require('yargs')
 const grpc = require('grpc')
-const path = require('path')
 
 const run = (protoFile, host, method, params) => {
   return new Promise((resolve, reject) => {
