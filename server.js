@@ -39,6 +39,10 @@ const main = () => {
     .usage('Usage: $0 [options] API.proto API.js [API2.proto API2.js ...]')
     .help('?')
     .alias('?', 'help')
+    .boolean('v')
+    .describe('v', 'Get the version')
+    .alias('v', 'version')
+
     .epilog('Define your protobuf rpc in a file ending with .proto, and your implementation in a .js file, which exports in the same object-shape as protobuf (package.Service.rpcMethod.) You can specify as many js and proto files as you like, and a server will be started for all of them.')
     .example('$0 -p 3000 example/helloworld.proto example/helloworld.js', 'Run a gRPC protobuf server on port 3000')
     .example('$0 example/helloworld.proto example/helloworld.js t1.proto t2.proto t3.proto t1.js t2.js', 'Run a gRPC protobuf server made of lots of definitions on port 5051')
@@ -49,6 +53,11 @@ const main = () => {
     .alias('p', 'port')
 
     .argv
+
+  if (argv.version) {
+    console.log('grpc-server version:', require('./package.json').version)
+    process.exit()
+  }
 
   const protoFiles = argv._.filter(f => path.extname(f) === '.proto')
   const jsFiles = argv._.filter(f => path.extname(f) === '.js')

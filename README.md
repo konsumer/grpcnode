@@ -23,6 +23,8 @@ Commands:
 
 Options:
   -?, --help  Show help                                                [boolean]
+  -v, --version  Get the version                                       [boolean]
+
 
 Examples:
   grpc-client run -?                        Get help on running an RPC method
@@ -41,6 +43,7 @@ Usage: grpc-server [options] API.proto API.js [API2.proto API2.js ...]
 
 Options:
   -?, --help  Show help                                                [boolean]
+  -v, --version  Get the version                                       [boolean]
   -p, --port  The port to run the gRPC server on                 [default: 5051]
 
 Examples:

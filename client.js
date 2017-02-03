@@ -56,6 +56,10 @@ const main = () => {
     .usage('Usage: $0 <command> [proto-file] [options]')
     .help('?')
     .alias('?', 'help')
+    .boolean('v')
+    .describe('v', 'Get the version')
+    .alias('v', 'version')
+
     .example('$0 run -?', 'Get help on running an RPC method')
     .example(`$0 run example.proto -m helloworld.Greeter.sayHello -a '{"name": "World"}'`, 'Run helloworld.Greeter.sayHello({name:"World"}) from a server at localhost:5051, defined by api.proto')
     .example('$0 ls api.proto', 'List available RPC methods, defined by api.proto')
@@ -81,6 +85,11 @@ const main = () => {
     .command('generate [proto-file]', 'Output a stub implementation for grpc-server.')
 
     .argv
+
+  if (argv.version) {
+    console.log('grpc-client version:', require('./package.json').version)
+    process.exit()
+  }
 
   if (!argv.protoFile) {
     console.log('Proto definition file is required.\n')
