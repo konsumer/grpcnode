@@ -13,6 +13,53 @@ Now, you can use it like this:
 - `grpc-client -?` - get help on using client
 - `grpc-server -?` - get help on using server
 
+```
+Usage: grpc-client <command> [proto-file] [options]
+
+Commands:
+  run [proto-file]       Run an RPC command
+  ls [proto-file]        List available RPC commands
+  generate [proto-file]  Output a stub implementation for grpc-server.
+
+Options:
+  -?, --help  Show help                                                [boolean]
+
+Examples:
+  grpc-client run -?                        Get help on running an RPC method
+  grpc-client run example.proto -m          Run
+  helloworld.Greeter.sayHello -a '{"name":  helloworld.Greeter.sayHello({name:"W
+  "World"}'                                 orld"}) from a server at
+                                            localhost:5051, defined by api.proto
+  grpc-client ls api.proto                  List available RPC methods, defined
+                                            by api.proto
+  grpc-client generate api.proto            Generate a server implementation
+                                            stub from api.proto
+```
+
+```
+Usage: grpc-server [options] API.proto API.js [API2.proto API2.js ...]
+
+Options:
+  -?, --help  Show help                                                [boolean]
+  -p, --port  The port to run the gRPC server on                 [default: 5051]
+
+Examples:
+  grpc-server -p 3000                       Run a gRPC protobuf server on port
+  example/helloworld.proto                  3000
+  example/helloworld.js
+  grpc-server example/helloworld.proto      Run a gRPC protobuf server made of
+  example/helloworld.js t1.proto t2.proto   lots of definitions on port 5051
+  t3.proto t1.js t2.js
+  grpc-server api/*.proto api/*.js          Run a gRPC protobuf server made of
+                                            lots of definitions on port 5051
+
+Define your protobuf rpc in a file ending with .proto, and your implementation
+in a .js file, which exports in the same object-shape as protobuf
+(package.Service.rpcMethod.) You can specify as many js and proto files as you
+like, and a server will be started for all of them.
+```
+
+
 ### examples
 
 - Get a list of methods/message-types: `grpc-client ls example/helloworld.proto`
