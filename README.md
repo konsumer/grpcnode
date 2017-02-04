@@ -15,6 +15,9 @@ Now, you can use it like this:
 
 ### ssl
 
+With SSL, you will need the Cert Authority certificate, client & server signed certificate and keys.
+
+
 I generated/signed my demo keys like this:
 
 ```
