@@ -1,13 +1,15 @@
 #! /usr/bin/env node
 
+const fs = require('fs')
 const yargs = require('yargs')
 const grpc = require('grpc')
 
-const run = (protoFile, host, method, params) => {
+const run = (protoFile, host, method, params, credentials) => {
+  credentials = credentials || grpc.credentials.createInsecure()
   return new Promise((resolve, reject) => {
     const proto = grpc.load(protoFile)
     const {0: pkg, 1: svc, 2: action} = method.split('.')
-    const client = new proto[pkg][svc](host, grpc.credentials.createInsecure())
+    const client = new proto[pkg][svc](host, credentials)
     client[action](params, (err, res) => {
       if (err) return reject(err)
       resolve(res)
@@ -65,6 +67,10 @@ const main = () => {
     .example('$0 ls api.proto', 'List available RPC methods, defined by api.proto')
     .example('$0 generate api.proto', 'Generate a server implementation stub from api.proto')
 
+    .describe('ca', 'SSL CA cert')
+    .describe('key', 'SSL server key')
+    .describe('cert', 'SSL server certificate')
+
     .command('run [proto-file]', 'Run an RPC command', {
       host: {
         describe: 'The host:port where the gRPC server is running',
@@ -79,6 +85,15 @@ const main = () => {
         describe: 'The remote-method to call',
         required: true,
         alias: 'm'
+      },
+      ca: {
+        describe: 'SSL CA cert'
+      },
+      key: {
+        describe: 'SSL client key'
+      },
+      cert: {
+        describe: 'SSL client certificate'
       }
     })
     .command('ls [proto-file]', 'List available RPC commands')
@@ -99,7 +114,23 @@ const main = () => {
 
   switch (argv._[0]) {
     case 'run':
-      run(argv.protoFile, argv.host, argv.method, argv.arguments ? JSON.parse(argv.arguments) : undefined)
+      let credentials
+      if (argv.ca || argv.key || argv.cert) {
+        if (!(argv.ca && argv.key && argv.cert)) {
+          console.log('SSL requires --ca, --key, & --cert\n')
+          yargs.showHelp()
+          process.exit(1)
+        }
+        credentials = grpc.credentials.createSsl(
+          fs.readFileSync(argv.ca),
+          fs.readFileSync(argv.key),
+          fs.readFileSync(argv.cert)
+        )
+      } else {
+        credentials = grpc.credentials.createInsecure()
+      }
+
+      run(argv.protoFile, argv.host, argv.method, argv.arguments ? JSON.parse(argv.arguments) : undefined, credentials)
         .then(r => { console.log(JSON.stringify(r, null, 2)) })
         .catch(e => {
           console.error(e)

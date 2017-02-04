@@ -1,6 +1,7 @@
 #! /usr/bin/env node
 
 const path = require('path')
+const fs = require('fs')
 const yargs = require('yargs')
 const grpc = require('grpc')
 
@@ -43,14 +44,18 @@ const main = () => {
     .describe('v', 'Get the version')
     .alias('v', 'version')
 
+    .describe('ca', 'SSL CA cert')
+    .describe('key', 'SSL server key')
+    .describe('cert', 'SSL server certificate')
+
     .epilog('Define your protobuf rpc in a file ending with .proto, and your implementation in a .js file, which exports in the same object-shape as protobuf (package.Service.rpcMethod.) You can specify as many js and proto files as you like, and a server will be started for all of them.')
-    .example('$0 -p 3000 example/helloworld.proto example/helloworld.js', 'Run a gRPC protobuf server on port 3000')
+    .example('$0 -h localhost:3000 example/helloworld.proto example/helloworld.js', 'Run a gRPC protobuf server on port 3000')
     .example('$0 example/helloworld.proto example/helloworld.js t1.proto t2.proto t3.proto t1.js t2.js', 'Run a gRPC protobuf server made of lots of definitions on port 5051')
     .example('$0 api/*.proto api/*.js', 'Run a gRPC protobuf server made of lots of definitions on port 5051')
 
-    .describe('p', 'The port to run the gRPC server on')
-    .default('p', 5051)
-    .alias('p', 'port')
+    .describe('h', 'The host/port to run the gRPC server on')
+    .default('h', 'localhost:5051')
+    .alias('h', 'host')
 
     .argv
 
@@ -68,9 +73,24 @@ const main = () => {
     process.exit(1)
   }
 
+  let credentials
+  if (argv.ca || argv.key || argv.cert) {
+    if (!(argv.ca && argv.key && argv.cert)) {
+      console.log('SSL requires --ca, --key, & --cert\n')
+      yargs.showHelp()
+      process.exit(1)
+    }
+    credentials = grpc.ServerCredentials.createSsl(fs.readFileSync(argv.ca), [{
+      cert_chain: fs.readFileSync(argv.cert),
+      private_key: fs.readFileSync(argv.key)
+    }], true)
+  } else {
+    credentials = grpc.ServerCredentials.createInsecure()
+  }
+
   const server = buildProtoServer(protoFiles, Object.assign({}, ...jsFiles.map(f => require(path.resolve(f)))))
-  server.bind('0.0.0.0:' + argv.port, grpc.ServerCredentials.createInsecure())
-  console.log('gRPC protobuf server started on 0.0.0.0:' + argv.port)
+  server.bind(argv.host, credentials)
+  console.log(`gRPC protobuf server started on ${argv.host}${(argv.ca || argv.key || argv.cert) && ' using SSL' || ''}`)
   server.start()
 }
 

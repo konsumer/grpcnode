@@ -13,55 +13,34 @@ Now, you can use it like this:
 - `grpc-client -?` - get help on using client
 - `grpc-server -?` - get help on using server
 
-```
-Usage: grpc-client <command> [proto-file] [options]
+### ssl
 
-Commands:
-  run [proto-file]       Run an RPC command
-  ls [proto-file]        List available RPC commands
-  generate [proto-file]  Output a stub implementation for grpc-server.
-
-Options:
-  -?, --help  Show help                                                [boolean]
-  -v, --version  Get the version                                       [boolean]
-
-
-Examples:
-  grpc-client run -?                        Get help on running an RPC method
-  grpc-client run example.proto -m          Run
-  helloworld.Greeter.sayHello -a '{"name":  helloworld.Greeter.sayHello({name:"W
-  "World"}'                                 orld"}) from a server at
-                                            localhost:5051, defined by api.proto
-  grpc-client ls api.proto                  List available RPC methods, defined
-                                            by api.proto
-  grpc-client generate api.proto            Generate a server implementation
-                                            stub from api.proto
-```
+I generated/signed my demo keys like this:
 
 ```
-Usage: grpc-server [options] API.proto API.js [API2.proto API2.js ...]
-
-Options:
-  -?, --help  Show help                                                [boolean]
-  -v, --version  Get the version                                       [boolean]
-  -p, --port  The port to run the gRPC server on                 [default: 5051]
-
-Examples:
-  grpc-server -p 3000                       Run a gRPC protobuf server on port
-  example/helloworld.proto                  3000
-  example/helloworld.js
-  grpc-server example/helloworld.proto      Run a gRPC protobuf server made of
-  example/helloworld.js t1.proto t2.proto   lots of definitions on port 5051
-  t3.proto t1.js t2.js
-  grpc-server api/*.proto api/*.js          Run a gRPC protobuf server made of
-                                            lots of definitions on port 5051
-
-Define your protobuf rpc in a file ending with .proto, and your implementation
-in a .js file, which exports in the same object-shape as protobuf
-(package.Service.rpcMethod.) You can specify as many js and proto files as you
-like, and a server will be started for all of them.
+openssl genrsa -passout pass:1111 -des3 -out ca.key 4096
+openssl req -passin pass:1111 -new -x509 -days 365 -key ca.key -out ca.crt -subj  "/C=US/ST=Oregon/L=Portland/O=Test/OU=CertAuthority/CN=localhost"
+openssl genrsa -passout pass:1111 -des3 -out server.key 4096
+openssl req -passin pass:1111 -new -key server.key -out server.csr -subj  "/C=US/ST=Oregon/L=Portland/O=Test/OU=Server/CN=localhost"
+openssl x509 -req -passin pass:1111 -days 365 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out server.crt
+openssl rsa -passin pass:1111 -in server.key -out server.key
+openssl genrsa -passout pass:1111 -des3 -out client.key 4096
+openssl req -passin pass:1111 -new -key client.key -out client.csr -subj "/C=US/ST=Oregon/L=Portland/O=Test/OU=Client/CN=localhost"
+openssl x509 -passin pass:1111 -req -days 365 -in client.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out client.crt
+openssl rsa -passin pass:1111 -in client.key -out client.key
 ```
 
+Then use it on server, like this:
+
+```
+grpc-server --ca=ca.crt --key=server.key --cert=server.crt example/helloworld.proto example/helloworld.js
+```
+
+And client, like this:
+
+```
+grpc-client run example/helloworld.proto --ca=ca.crt --key=client.key --cert=client.crt -m helloworld.Greeter.sayHello -a '{"name": "World"}'`
+```
 
 ### examples
 
