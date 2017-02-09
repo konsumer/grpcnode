@@ -9,15 +9,16 @@ const grpc = require('grpc')
  * Create a gRPC server from several proto and js files
  * @param  {string[]} protoFiles Array of filenames that should be merged into definition
  * @param  {Object} methods      JS implementations of your RPCs, in same structure as they are in protos
+ * @param  {String} include      Path to resolve imports from
  * @return {GRPCServer}          The gRPC server
  */
-const buildProtoServer = (protoFiles, methods) => {
+const buildProtoServer = (protoFiles, methods, include) => {
   if (!Array.isArray(protoFiles)) {
     protoFiles = [protoFiles]
   }
   const server = new grpc.Server()
   protoFiles.forEach(p => {
-    const proto = grpc.load(p)
+    const proto = include ? grpc.load({file: p, root: include}) : grpc.load(p)
     Object.keys(proto).forEach(p => {
       Object.keys(proto[p]).forEach(t => {
         if (proto[p][t].service) {
@@ -43,6 +44,9 @@ const main = () => {
     .boolean('v')
     .describe('v', 'Get the version')
     .alias('v', 'version')
+
+    .describe('I', 'Path to resolve imports from')
+    .alias('I', 'include')
 
     .describe('ca', 'SSL CA cert')
     .describe('key', 'SSL server key')
@@ -88,7 +92,7 @@ const main = () => {
     credentials = grpc.ServerCredentials.createInsecure()
   }
 
-  const server = buildProtoServer(protoFiles, Object.assign({}, ...jsFiles.map(f => require(path.resolve(f)))))
+  const server = buildProtoServer(protoFiles, Object.assign({}, ...jsFiles.map(f => require(path.resolve(f)))), argv.include)
   server.bind(argv.host, credentials)
   console.log(`gRPC protobuf server started on ${argv.host}${(argv.ca || argv.key || argv.cert) && ' using SSL' || ''}`)
   server.start()

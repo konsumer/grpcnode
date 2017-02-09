@@ -4,10 +4,11 @@ const fs = require('fs')
 const yargs = require('yargs')
 const grpc = require('grpc')
 
-const run = (protoFile, host, method, params, credentials) => {
+const run = (protoFile, host, method, params, credentials, include) => {
+  console.log('include', include)
   credentials = credentials || grpc.credentials.createInsecure()
   return new Promise((resolve, reject) => {
-    const proto = grpc.load(protoFile)
+    const proto = include ? grpc.load({file: protoFile, root: include}) : grpc.load(protoFile)
     const {0: pkg, 1: svc, 2: action} = method.split('.')
     const client = new proto[pkg][svc](host, credentials)
     client[action](params, (err, res) => {
@@ -17,8 +18,8 @@ const run = (protoFile, host, method, params, credentials) => {
   })
 }
 
-const ls = (protoFile) => {
-  const proto = grpc.load(protoFile)
+const ls = (protoFile, include) => {
+  const proto = include ? grpc.load({file: protoFile, root: include}) : grpc.load(protoFile)
   const info = {services: {}, messages: {}}
   Object.keys(proto).forEach(ns => {
     Object.keys(proto[ns]).forEach(svc => {
@@ -36,8 +37,8 @@ const ls = (protoFile) => {
   return info
 }
 
-const generate = (protoFile) => {
-  const proto = grpc.load(protoFile)
+const generate = (protoFile, include) => {
+  const proto = include ? grpc.load({file: protoFile, root: include}) : grpc.load(protoFile)
   let out = ''
   Object.keys(proto).forEach(ns => {
     out += `module.exports.${ns} = {}\n`
@@ -67,11 +68,11 @@ const main = () => {
     .example('$0 ls api.proto', 'List available RPC methods, defined by api.proto')
     .example('$0 generate api.proto', 'Generate a server implementation stub from api.proto')
 
-    .describe('ca', 'SSL CA cert')
-    .describe('key', 'SSL server key')
-    .describe('cert', 'SSL server certificate')
-
     .command('run [proto-file]', 'Run an RPC command', {
+      include: {
+        describe: 'Path to resolve imports from',
+        alias: 'I'
+      },
       host: {
         describe: 'The host:port where the gRPC server is running',
         default: 'localhost:5051'
@@ -96,8 +97,18 @@ const main = () => {
         describe: 'SSL client certificate'
       }
     })
-    .command('ls [proto-file]', 'List available RPC commands')
-    .command('generate [proto-file]', 'Output a stub implementation for grpc-server.')
+    .command('ls [proto-file]', 'List available RPC commands', {
+      include: {
+        describe: 'Path to resolve imports from',
+        alias: 'I'
+      }
+    })
+    .command('generate [proto-file]', 'Output a stub implementation for grpc-server.', {
+      include: {
+        describe: 'Path to resolve imports from',
+        alias: 'I'
+      }
+    })
 
     .argv
 
@@ -130,7 +141,7 @@ const main = () => {
         credentials = grpc.credentials.createInsecure()
       }
 
-      run(argv.protoFile, argv.host, argv.method, argv.arguments ? JSON.parse(argv.arguments) : undefined, credentials)
+      run(argv.protoFile, argv.host, argv.method, argv.arguments ? JSON.parse(argv.arguments) : undefined, credentials, argv.include)
         .then(r => { console.log(JSON.stringify(r, null, 2)) })
         .catch(e => {
           console.error(e)
@@ -138,7 +149,7 @@ const main = () => {
         })
       break
     case 'ls':
-      const info = ls(argv.protoFile)
+      const info = ls(argv.protoFile, argv.include)
       console.log('Methods:')
       Object.keys(info.services).forEach(ns => {
         info.services[ns].forEach(method => {
@@ -151,7 +162,7 @@ const main = () => {
       })
       break
     case 'generate':
-      console.log(generate(argv.protoFile))
+      console.log(generate(argv.protoFile, argv.include))
       break
     default:
       console.log('Valid commands are `ls`, `generate`, and `run`.\n')

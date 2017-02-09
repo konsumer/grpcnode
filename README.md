@@ -47,9 +47,9 @@ grpc-client run example/helloworld.proto --ca=ca.crt --key=client.key --cert=cli
 
 ### examples
 
-- Get a list of methods/message-types: `grpc-client ls example/helloworld.proto`
+- Get a list of methods/message-types: `grpc-client ls example/helloworld.proto` or `node client.js ls -I example/ helloworld.proto`
 - Run an RPC on server: `grpc-client run example/helloworld.proto -m helloworld.Greeter.sayHello -a '{"name": "World"}'`
-- Start a server: `grpc-server example/*.js example/*.proto`
+- Start a server: `grpc-server -I example/ example/*.js example/*.proto` or `node server.js -I example/ example/helloworld.js helloworld.proto`
 
 ## in your code
 
