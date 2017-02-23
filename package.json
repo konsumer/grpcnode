@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/konsumer/grpcnode#readme",
   "dependencies": {
-    "grpc": "^1.0.1",
+    "grpc": "^1.1.2",
     "yargs": "^6.6.0"
   },
   "devDependencies": {
