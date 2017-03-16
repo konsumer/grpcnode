@@ -30,7 +30,22 @@ const ls = (protoFile, include) => {
           return `${r.name}(${cin}${r.requestName}) → ${cout}${r.responseName}`
         })
       } else {
-        info.messages[`${ns}.${svc}`] = JSON.stringify(proto[ns][svc].decode(proto[ns][svc].encode({})))
+        if (proto[ns][svc].encode) {
+          const val = proto[ns][svc].decode(proto[ns][svc].encode())
+          try {
+            info.messages[`${ns}.${svc}`] = JSON.stringify(val)
+          } catch (e) {
+            const out = {}
+            Object.keys(val).forEach(v => {
+              if (val[v].map) {
+                out[v] = `Map <${val[v].keyElem.type.name} : ${val[v].valueElem.type.name}>`
+              } else {
+                out[v] = val[v]
+              }
+            })
+            info.messages[`${ns}.${svc}`] = JSON.stringify(out)
+          }
+        }
       }
     })
   })
