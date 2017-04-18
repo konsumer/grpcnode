@@ -5,7 +5,6 @@ const yargs = require('yargs')
 const grpc = require('grpc')
 
 const run = (protoFile, host, method, params, credentials, include) => {
-  console.log('include', include)
   credentials = credentials || grpc.credentials.createInsecure()
   return new Promise((resolve, reject) => {
     const proto = include ? grpc.load({file: protoFile, root: include}) : grpc.load(protoFile)
