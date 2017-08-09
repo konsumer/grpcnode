@@ -12,7 +12,7 @@ const grpc = require('grpc')
  * @param  {String} include      Path to resolve imports from
  * @return {GRPCServer}          The gRPC server
  */
-const buildProtoServer = (protoFiles, methods, include) => {
+const buildProtoServer = (protoFiles, methods, include, debug) => {
   if (!Array.isArray(protoFiles)) {
     protoFiles = [protoFiles]
   }
@@ -23,12 +23,14 @@ const buildProtoServer = (protoFiles, methods, include) => {
       Object.keys(proto[p]).forEach(t => {
         if (proto[p][t].service) {
           const methodImplementations = {}
-          proto[p][t].service.children.forEach(c => {
-            if (typeof methods[p][t][c.name] === 'function') {
-              methodImplementations[c.name] = methods[p][t][c.name]
+          Object.keys(proto[p][t].service).forEach(function(service){
+            const c = proto[p][t].service[service]
+            if (typeof methods[p][t][c.originalName] === 'function') {
+              console.log([p, t, c.originalName].join('.') + ' added.')
+              methodImplementations[c.originalName] = methods[p][t][c.originalName]
             }
           })
-          server.addProtoService(proto[p][t].service, methodImplementations)
+          server.addService(proto[p][t].service, methodImplementations)
         }
       })
     })
