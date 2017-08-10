@@ -4,11 +4,12 @@ const fs = require('fs')
 const yargs = require('yargs')
 const grpc = require('grpc')
 
+// TODO: change case of method to match what it is in protobuf
 const run = (protoFile, host, method, params, credentials, include) => {
   credentials = credentials || grpc.credentials.createInsecure()
   return new Promise((resolve, reject) => {
     const proto = include ? grpc.load({file: protoFile, root: include}) : grpc.load(protoFile)
-    const {0: pkg, 1: svc, 2: action} = method.split('.')
+    const [pkg, svc, action] = method.split('.')
     const client = new proto[pkg][svc](host, credentials)
     client[action](params, (err, res) => {
       if (err) return reject(err)
@@ -23,10 +24,11 @@ const ls = (protoFile, include) => {
   Object.keys(proto).forEach(ns => {
     Object.keys(proto[ns]).forEach(svc => {
       if (proto[ns][svc].service) {
-        info.services[`${ns}.${svc}`] = proto[ns][svc].service.children.map(r => {
+        info.services[`${ns}.${svc}`] = Object.keys(proto[ns][svc].service).map(s => {
+          const r = proto[ns][svc].service[s]
           const cin = r.requestStream ? '~' : ''
           const cout = r.responseStream ? '~' : ''
-          return `${r.name}(${cin}${r.requestName}) → ${cout}${r.responseName}`
+          return `${r.originalName}(${cin}${r.requestType.name}) → ${cout}${r.responseType.name}`
         })
       } else {
         if (proto[ns][svc].encode) {
@@ -59,8 +61,9 @@ const generate = (protoFile, include) => {
     Object.keys(proto[ns]).forEach(svc => {
       if (proto[ns][svc].service) {
         out += `module.exports.${ns}.${svc} = {}\n`
-        proto[ns][svc].service.children.forEach(r => {
-          out += `\nmodule.exports.${ns}.${svc}.${r.name} = (ctx, cb) => {\n  // do stuff with ctx.request\n  // cb(err, response)\n}\n`
+        Object.keys(proto[ns][svc].service).forEach(i => {
+          const r = proto[ns][svc].service[i]
+          out += `\nmodule.exports.${ns}.${svc}.${r.originalName} = (ctx, cb) => {\n  // do stuff with ctx.request\n  // cb(err, response)\n}\n`
         })
       }
     })
