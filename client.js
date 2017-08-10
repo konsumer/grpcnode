@@ -4,6 +4,8 @@ const fs = require('fs')
 const yargs = require('yargs')
 const grpc = require('grpc')
 
+const lowerFirstChar = str => str.charAt(0).toLowerCase() + str.slice(1)
+
 // TODO: change case of method to match what it is in protobuf
 const run = (protoFile, host, method, params, credentials, include) => {
   credentials = credentials || grpc.credentials.createInsecure()
@@ -11,7 +13,7 @@ const run = (protoFile, host, method, params, credentials, include) => {
     const proto = include ? grpc.load({file: protoFile, root: include}) : grpc.load(protoFile)
     const [pkg, svc, action] = method.split('.')
     const client = new proto[pkg][svc](host, credentials)
-    client[action](params, (err, res) => {
+    client[lowerFirstChar(action)](params, (err, res) => {
       if (err) return reject(err)
       resolve(res)
     })
@@ -28,7 +30,7 @@ const ls = (protoFile, include) => {
           const r = proto[ns][svc].service[s]
           const cin = r.requestStream ? '~' : ''
           const cout = r.responseStream ? '~' : ''
-          return `${r.originalName}(${cin}${r.requestType.name}) → ${cout}${r.responseType.name}`
+          return `${lowerFirstChar(r.originalName)}(${cin}${r.requestType.name}) → ${cout}${r.responseType.name}`
         })
       } else {
         if (proto[ns][svc].encode) {
