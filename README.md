@@ -47,6 +47,8 @@ grpc-client run example/helloworld.proto --ca=ca.crt --key=client.key --cert=cli
 
 ### examples
 
+You can see an example project [here](https://github.com/konsumer/grpc-demo) that shows how to use all the CLI tools, with no code other than your endpoint implementation.
+
 - Get a list of methods/message-types: `grpc-client ls example/helloworld.proto` or `node client.js ls -I example/ helloworld.proto`
 - Run an RPC on server: `grpc-client run example/helloworld.proto -m helloworld.Greeter.sayHello -a '{"name": "World"}'`
 - Start a server: `grpc-server -I example/ example/*.js example/*.proto` or `node server.js -I example/ example/helloworld.js helloworld.proto`
