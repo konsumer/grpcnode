@@ -76,8 +76,8 @@ function sayGoodbye (call, callback) {
 const implementation = {
   helloworld: {
     Greeter: {
-      sayHello,
-      sayGoodbye
+      SayHello: sayHello,
+      SayGoodbye: sayGoodbye
     }
   }
 }
