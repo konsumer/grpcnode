@@ -43,6 +43,7 @@ const getCredentials = (ca, key, cert, server = true) => {
   return credentials
 }
 
+// recursive inner-loop for makeServer
 const addImplementations = (proto, server, implementation, name = '') => {
   const handlers = {}
   Object.keys(implementation).forEach(i => {
@@ -65,6 +66,7 @@ const addImplementations = (proto, server, implementation, name = '') => {
   }
 }
 
+// given an implementation object and some proto-filenames, make a server
 const makeServer = (implementation, protoFiles, root) => {
   const server = new grpc.Server()
   protoFiles.forEach(file => {
@@ -93,6 +95,7 @@ const ls = (proto) => {
   })
 }
 
+// run a remote gRPC command
 const run = (files, rpc, input, host = 'localhost:50051', root, ca, key, cert) => {
   const credentials = getCredentials(ca, key, cert, false)
   for (let f in files) {
