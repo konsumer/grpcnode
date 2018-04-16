@@ -102,3 +102,14 @@ console.log(grpcnode.ls('api.proto'))
 
 ```
 
+# TODO
+
+I'm goign through a major raftor to make namespaces work better & improve output. Here's what I need to do before that is complete:
+
+* finish new grpcnode
+* update docs
+* depracate example (point here)
+* make sure gateway is working, point to grpcnode's example
+* setup travis & greenkeeper for grpcnode & gateway
+* re-publish chnages to grpcnode (with new major) & gateway
+

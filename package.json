@@ -1,15 +1,17 @@
 {
   "name": "grpcnode",
   "version": "0.1.0",
-  "description": "",
-  "main": "index.js",
+  "description": "CLI tool for working with gRPC in nodejs, dynamically",
   "scripts": {
-    "start": "./server.js example/helloworld.proto example/helloworld.js"
+    "build": "babel src -d build",
+    "prepublish": "npm run build"
   },
   "bin": {
-    "grpc-server": "server.js",
-    "grpc-client": "client.js"
+    "grpcnode": "build/grpcnode.js"
   },
+  "files": [
+    "build"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/konsumer/grpcnode.git"
@@ -20,13 +22,32 @@
     "url": "https://github.com/konsumer/grpcnode/issues"
   },
   "homepage": "https://github.com/konsumer/grpcnode#readme",
-  "dependencies": {
-    "yargs": "^6.6.0",
-    "grpc": "^1.4.1"
-  },
   "keywords": [
     "grpc",
     "api",
     "protobuf"
-  ]
+  ],
+  "babel": {
+    "presets": [
+      "env",
+      "stage-3"
+    ],
+    "plugins": [
+      "shebang"
+    ]
+  },
+  "dependencies": {
+    "chalk": "^2.3.2",
+    "grpc": "^1.10.1",
+    "indent": "0.0.2",
+    "json-colorizer": "^1.1.0",
+    "lodash": "^4.17.5",
+    "yargs": "^11.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-shebang": "0.0.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-3": "^6.24.1"
+  }
 }

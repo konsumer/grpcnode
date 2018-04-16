@@ -1,0 +1,33 @@
+syntax = "proto3";
+package helloworld.v1;
+
+import "google/api/annotations.proto";
+
+// The request message containing the user's name.
+message GreeterRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings
+message GreeterReply {
+  string message = 1;
+}
+
+// The greeting service definition.
+service Greeter {
+  // Sends a greeting
+  rpc SayHello (GreeterRequest) returns (GreeterReply) {
+    option (google.api.http) = {
+      post: "/v1/hi"
+      body: "*"
+    };
+  }
+
+  // Sends a farewell
+  rpc SayGoodbye (GreeterRequest) returns (GreeterReply) {
+    option (google.api.http) = {
+      post: "/v1/bye"
+      body: "*"
+    };
+  }
+}
