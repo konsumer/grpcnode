@@ -49,7 +49,9 @@ const addImplementations = (proto, server, implementation, name = '', debug = tr
   Object.keys(implementation).forEach(i => {
     if (typeof implementation[i] === 'function') {
       const formattedName = chalk.blue(`${name.replace(/^\./, chalk.white('/')).replace(/\./g, chalk.white('.'))}/${chalk.cyan(i)}`)
-      console.log(`${formattedName} added.`)
+      if (debug) {
+        console.log(`${formattedName} added.`)
+      }
       handlers[ i ] = (ctx, cb) => {
         Promise.resolve(implementation[i](ctx))
           .then(res => {
@@ -128,7 +130,7 @@ yargs // eslint-disable-line
         .boolean('quiet')
         .describe('quiet', 'Suppress logs')
         .alias('quiet', 'q')
-        .example(`$0 server -I example/proto helloworld.proto`, 'Start a gRPC server')
+        .example(`$0 server -I example/proto helloworld.proto example/helloworld.js`, 'Start a gRPC server')
     },
     argv => {
       const files = (Array.isArray(argv.FILES) ? argv.FILES : [argv.FILES])
@@ -145,12 +147,14 @@ yargs // eslint-disable-line
       const credentials = getCredentials(ca, key, cert)
       const server = makeServer(implementation, protoFiles, resolve(process.cwd(), include), quiet)
       server.bind(host, credentials)
-      console.log(chalk.yellow(`gRPC protobuf server started on ${chalk.green(host)}${ca ? chalk.blue(' using SSL') : ''}`))
+      if (!quiet) {
+        console.log(chalk.yellow(`gRPC protobuf server started on ${chalk.green(host)}${ca ? chalk.blue(' using SSL') : ''}`))
+      }
       server.start()
     }
   )
 
-  .command('client', 'Act as a client of a gRPC server',
+  .command('client <command> <FILES...>', 'Act as a client of a gRPC server',
     yargs => {
       yargs
         .command('ls <FILES...>', 'List available services on the gRPC server', yargs => {
@@ -200,7 +204,6 @@ yargs // eslint-disable-line
         .demandCommand(1, 'You must set a command: `ls` or `run`')
     }
   )
-
   .example('$0 client --help', 'Get more help about the client command')
   .example('$0 server --help', 'Get more help about the server command')
   .help()

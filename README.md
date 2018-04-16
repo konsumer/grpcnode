@@ -10,8 +10,26 @@ Install with `npm i -g grpcnode`.
 
 Now, you can use it like this:
 
-- `grpc-client -?` - get help on using client
-- `grpc-server -?` - get help on using server
+```
+grpcnode <command>
+
+Commands:
+  grpcnode server <FILES...>  Start a gRPC server with your proto and javascript files
+  grpcnode client             Act as a client of a gRPC server
+
+Options:
+  --help         Show help                                           [boolean]
+  --ca           SSL CA cert
+  --key          SSL server key
+  --cert         SSL server certificate
+  -h, --host     The host/port to run the gRPC server on             [default: "localhost:50051"]
+  -v, --version  Show version number                                 [boolean]
+  -I, --include  Root include path (sorry only one root-path works)
+
+Examples:
+  grpcnode client --help  Get more help about the client command
+  grpcnode server --help  Get more help about the server command
+```
 
 ### ssl
 
@@ -36,80 +54,30 @@ openssl rsa -passin pass:1111 -in client.key -out client.key
 Then use it on server, like this:
 
 ```
-grpc-server --ca=ca.crt --key=server.key --cert=server.crt example/helloworld.proto example/helloworld.js
+grpcnode server --ca=ca.crt --key=server.key --cert=server.crt -I example/ example/helloworld.proto example/helloworld.js
 ```
 
 And client, like this:
 
 ```
-grpc-client run example/helloworld.proto --ca=ca.crt --key=client.key --cert=client.crt -m helloworld.Greeter.sayHello -a '{"name": "World"}'`
+grpcnode client run --ca=ca.crt --key=client.key --cert=client.crt -I example/proto helloworld.proto -c '/helloworld.v1.Greeter/SayGoodbye({"name":"World"})'
 ```
 
 ### examples
 
-You can see an example project [here](https://github.com/konsumer/grpc-demo) that shows how to use all the CLI tools, with no code other than your endpoint implementation.
+You can see an example project [here](https://github.com/konsumer/grpcnode/example) that shows how to use all the CLI tools, with no code other than your endpoint implementation.
 
-- Get a list of methods/message-types: `grpc-client ls example/helloworld.proto` or `node client.js ls -I example/ helloworld.proto`
-- Run an RPC on server: `grpc-client run example/helloworld.proto -m helloworld.Greeter.sayHello -a '{"name": "World"}'`
+- Get a list of methods/message-types: `grpcnode client ls -I ./example/proto helloworld.proto`
 - Start a server: `grpc-server -I example/ example/*.js example/*.proto` or `node server.js -I example/ example/helloworld.js helloworld.proto`
+- Run an RPC on server: `grpcnode server -I example/proto helloworld.proto example/helloworld.js`
 
-## in your code
-
-Install in your project with `npm i -S grpcnode`.
-
-### server
-
-```js
-const grpcnode = require('grpcnode').server
-const grpc = require('grpc')
-
-function sayHello (call, callback) {
-  const message = `Hello ${call.request.name}`
-  callback(null, {message})
-}
-
-function sayGoodbye (call, callback) {
-  const message = `Goodbye ${call.request.name}`
-  callback(null, {message})
-}
-
-const implementation = {
-  helloworld: {
-    Greeter: {
-      sayHello,
-      sayGoodbye
-    }
-  }
-}
-
-const server = grpcnode('api.proto', implementation)
-server.bind('0.0.0.0:' + argv.port, grpc.ServerCredentials.createInsecure())
-console.log('gRPC protobuf server started on 0.0.0.0:' + argv.port)
-server.start()
-```
-
-### client
-
-```js
-const grpcnode = require('grpcnode').client
-
-// run remote command
-grpcnode.run('api.proto', 'localhost:5051', 'helloworld.Greeter.sayHello', {name:'World'})
-  .then(response => { console.log(response) })
-
-// list available RPC & Messages
-console.log(grpcnode.ls('api.proto'))
-
-```
 
 # TODO
 
 I'm going through a major refactor to make namespaces work better & improve output. Here's what I need to do before that is complete:
 
-* finish new grpcnode
-* update docs
 * depracate example (point here)
-* make sure gateway is working, point to grpcnode's example
 * setup travis & greenkeeper for grpcnode & gateway
 * re-publish changes to grpcnode (with new major) & gateway
+* docker-publish gateway
 
