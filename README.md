@@ -111,5 +111,5 @@ I'm going through a major refactor to make namespaces work better & improve outp
 * depracate example (point here)
 * make sure gateway is working, point to grpcnode's example
 * setup travis & greenkeeper for grpcnode & gateway
-* re-publish chnages to grpcnode (with new major) & gateway
+* re-publish changes to grpcnode (with new major) & gateway
 
