@@ -67,7 +67,7 @@ grpcnode client run --ca=ca.crt --key=client.key --cert=client.crt -I example/pr
 
 ### examples
 
-You can see an example project [here](https://github.com/konsumer/grpcnode/example) that shows how to use all the CLI tools, with no code other than your endpoint implementation.
+You can see an example project [here](https://github.com/konsumer/grpcnode/tree/master/example) that shows how to use all the CLI tools, with no code other than your endpoint implementation.
 
 - Get a list of methods/message-types: `grpcnode client ls -I ./example/proto helloworld.proto`
 - Start a server: `grpc-server -I example/ example/*.js example/*.proto` or `node server.js -I example/ example/helloworld.js helloworld.proto`
