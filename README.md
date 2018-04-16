@@ -104,7 +104,7 @@ console.log(grpcnode.ls('api.proto'))
 
 # TODO
 
-I'm goign through a major raftor to make namespaces work better & improve output. Here's what I need to do before that is complete:
+I'm going through a major refactor to make namespaces work better & improve output. Here's what I need to do before that is complete:
 
 * finish new grpcnode
 * update docs
