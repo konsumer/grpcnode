@@ -6,7 +6,7 @@
   "scripts": {
     "grpc": "grpcnode server -I ./proto helloworld.proto helloworld.js",
     "gateway": "grpc-dynamic-gateway -I ./proto helloworld.proto",
-    "test": "grpcnode client run -I ./proto helloworld.proto -m helloworld.Greeter.SayHello -a '{\"name\": \"World\"}'",
+    "test": "grpcnode client run -I ./proto helloworld.proto -c '/helloworld.v1.Greeter/SayHello({\"name\": \"World\"})'",
     "ls": "grpcnode client ls -I ./proto helloworld.proto"
   },
   "repository": {
@@ -20,9 +20,7 @@
   },
   "homepage": "https://github.com/konsumer/grpc-demo#readme",
   "dependencies": {
-    "chalk": "^2.3.2",
     "grpc-dynamic-gateway": "0.3.1",
-    "grpcnode": "1.0.0",
-    "json-colorizer": "^1.1.0"
+    "grpcnode": "1.0.0"
   }
 }
