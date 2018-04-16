@@ -72,12 +72,3 @@ You can see an example project [here](https://github.com/konsumer/grpcnode/examp
 - Run an RPC on server: `grpcnode server -I example/proto helloworld.proto example/helloworld.js`
 
 
-# TODO
-
-I'm going through a major refactor to make namespaces work better & improve output. Here's what I need to do before that is complete:
-
-* depracate example (point here)
-* setup travis & greenkeeper for grpcnode & gateway
-* re-publish changes to grpcnode (with new major) & gateway
-* docker-publish gateway
-
