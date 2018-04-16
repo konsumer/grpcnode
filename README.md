@@ -1,5 +1,7 @@
 # Simple node-based gRPC client/server
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/konsumer/grpcnode.svg)](https://greenkeeper.io/)
+
 When you want a quick gRPC server or client, made with node.
 
 [![NPM](https://nodei.co/npm/grpcnode.png?compact=true)](https://nodei.co/npm/grpcnode/)
