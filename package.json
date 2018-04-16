@@ -1,6 +1,6 @@
 {
   "name": "grpcnode",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "CLI tool for working with gRPC in nodejs, dynamically",
   "scripts": {
     "build": "babel src -d build",
