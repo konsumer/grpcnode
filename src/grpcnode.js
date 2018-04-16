@@ -44,21 +44,24 @@ const getCredentials = (ca, key, cert, server = true) => {
 }
 
 // recursive inner-loop for makeServer
-const addImplementations = (proto, server, implementation, name = '') => {
+const addImplementations = (proto, server, implementation, name = '', debug = true) => {
   const handlers = {}
   Object.keys(implementation).forEach(i => {
     if (typeof implementation[i] === 'function') {
-      console.log(`${name}.${chalk.cyan(i)} added.`)
+      const formattedName = chalk.blue(`${name.replace(/^\./, chalk.white('/')).replace(/\./g, chalk.white('.'))}/${chalk.cyan(i)}`)
+      console.log(`${formattedName} added.`)
       handlers[ i ] = (ctx, cb) => {
         Promise.resolve(implementation[i](ctx))
           .then(res => {
-            console.log(`${chalk.yellow((new Date()).toISOString())} (${chalk.cyan(ctx.getPeer())}): ${name}.${chalk.cyan(i)} (${colorize(ctx.request)})`)
+            if (debug) {
+              console.log(`GRPC: ${chalk.yellow((new Date()).toISOString())} (${chalk.cyan(ctx.getPeer())}): ${formattedName}(${colorize(ctx.request)})`)
+            }
             cb(null, res)
           })
           .catch(err => cb(err))
       }
     } else {
-      addImplementations(proto[i], server, implementation[i], `${chalk.blue(name)}.${chalk.blue(i)}`)
+      addImplementations(proto[i], server, implementation[i], `${name}.${i}`, debug)
     }
   })
   if (proto.service) {
@@ -67,11 +70,11 @@ const addImplementations = (proto, server, implementation, name = '') => {
 }
 
 // given an implementation object and some proto-filenames, make a server
-const makeServer = (implementation, protoFiles, root) => {
+const makeServer = (implementation, protoFiles, root, quiet) => {
   const server = new grpc.Server()
   protoFiles.forEach(file => {
     const proto = grpc.load({file, root})
-    addImplementations(proto, server, implementation)
+    addImplementations(proto, server, implementation, '', !quiet)
   })
   return server
 }
@@ -121,7 +124,11 @@ const run = (files, rpc, input, host = 'localhost:50051', root, ca, key, cert) =
 yargs // eslint-disable-line
   .command('server <FILES...>', 'Start a gRPC server with your proto and javascript files',
     yargs => {
-      yargs.example(`$0 server -I example/proto helloworld.proto`, 'Start a gRPC server')
+      yargs
+        .boolean('quiet')
+        .describe('quiet', `Suppress logs`)
+        .alias('quiet', 'q')
+        .example(`$0 server -I example/proto helloworld.proto`, 'Start a gRPC server')
     },
     argv => {
       const files = (Array.isArray(argv.FILES) ? argv.FILES : [argv.FILES])
@@ -133,10 +140,10 @@ yargs // eslint-disable-line
       if (!jsFiles.length) {
         error('You must set at least 1 js implementation file.')
       }
-      const { ca, key, cert, host, include } = argv
+      const { ca, key, cert, host, include, quiet } = argv
       const implementation = merge({}, ...jsFiles)
       const credentials = getCredentials(ca, key, cert)
-      const server = makeServer(implementation, protoFiles, resolve(process.cwd(), include))
+      const server = makeServer(implementation, protoFiles, resolve(process.cwd(), include), quiet)
       server.bind(host, credentials)
       console.log(chalk.yellow(`gRPC protobuf server started on ${chalk.green(host)}${ca ? chalk.blue(' using SSL') : ''}`))
       server.start()
@@ -206,6 +213,6 @@ yargs // eslint-disable-line
   .describe('key', 'SSL server key')
   .describe('cert', 'SSL server certificate')
   .describe('h', 'The host/port to run the gRPC server on')
-  .default('h', 'localhost:50051')
+  .default('h', process.env.GRPC_HOST || 'localhost:50051')
   .alias('h', 'host')
   .argv

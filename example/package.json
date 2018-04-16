@@ -20,7 +20,9 @@
   },
   "homepage": "https://github.com/konsumer/grpc-demo#readme",
   "dependencies": {
+    "chalk": "^2.3.2",
     "grpc-dynamic-gateway": "0.2.2",
-    "grpcnode": "1.0.0"
+    "grpcnode": "1.0.0",
+    "json-colorizer": "^1.1.0"
   }
 }
