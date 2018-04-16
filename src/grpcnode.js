@@ -126,7 +126,7 @@ yargs // eslint-disable-line
     yargs => {
       yargs
         .boolean('quiet')
-        .describe('quiet', `Suppress logs`)
+        .describe('quiet', 'Suppress logs')
         .alias('quiet', 'q')
         .example(`$0 server -I example/proto helloworld.proto`, 'Start a gRPC server')
     },
