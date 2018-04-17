@@ -6,7 +6,7 @@ When you want a quick gRPC server or client, made with node.
 
 [![NPM](https://nodei.co/npm/grpcnode.png?compact=true)](https://nodei.co/npm/grpcnode/)
 
-[<img width="100%" src="https://media.giphy.com/media/1WbSoaR42J6XJkX0Ft/giphy.gif">](https://asciinema.org/a/kbkRnHTTRhjXj7YJe6k9mrdZe)
+[<img width="100%" src="https://media.giphy.com/media/1fge4BuwiSZBwsO3wM/giphy.gif">](https://asciinema.org/a/kbkRnHTTRhjXj7YJe6k9mrdZe)
 
 ## cli
 

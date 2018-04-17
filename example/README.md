@@ -2,7 +2,7 @@
 
 Full demo of my nodejs CLI tools for grpc
 
-[<img width="100%" src="https://media.giphy.com/media/1WbSoaR42J6XJkX0Ft/giphy.gif">](https://asciinema.org/a/kbkRnHTTRhjXj7YJe6k9mrdZe)
+[<img width="100%" src="https://media.giphy.com/media/1fge4BuwiSZBwsO3wM/giphy.gif">](https://asciinema.org/a/kbkRnHTTRhjXj7YJe6k9mrdZe)
 
 It's meant to show to use all the CLI tools, with no code other than your endpoint implementation.
 
