@@ -1,6 +1,6 @@
 # Simple node-based gRPC client/server
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/konsumer/grpcnode.svg)](https://greenkeeper.io/)
+[![Build Status](https://travis-ci.org/konsumer/grpc-dynamic-gateway.svg?branch=master)](https://travis-ci.org/konsumer/grpc-dynamic-gateway) [![Greenkeeper badge](https://badges.greenkeeper.io/konsumer/grpcnode.svg)](https://greenkeeper.io/)
 
 When you want a quick gRPC server or client, made with node.
 
