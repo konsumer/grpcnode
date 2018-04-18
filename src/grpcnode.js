@@ -7,7 +7,7 @@ import { merge, get } from 'lodash'
 import grpc from 'grpc'
 import chalk from 'chalk'
 import indent from 'indent'
-import colorize from 'json-colorizer'
+import jsoncolor from 'jsoncolor'
 
 // require, but find the file from where the user is
 const reqCwd = name => require(resolve(process.cwd(), name))
@@ -56,7 +56,7 @@ const addImplementations = (proto, server, implementation, name = '', debug = tr
         Promise.resolve(implementation[i](ctx))
           .then(res => {
             if (debug) {
-              console.log(`GRPC: ${chalk.yellow((new Date()).toISOString())} (${chalk.cyan(ctx.getPeer())}): ${formattedName}(${colorize(ctx.request)})`)
+              console.log(`GRPC: ${chalk.yellow((new Date()).toISOString())} (${chalk.cyan(ctx.getPeer())}): ${formattedName}(${jsoncolor(ctx.request)})`)
             }
             cb(null, res)
           })
@@ -91,8 +91,8 @@ const ls = (proto) => {
       console.log(Object.values(proto[p].service)
         .map(p => {
           return p.path.replace(/\/(.+)\/[0-9a-zA-Z_]+$/, '/' + chalk.yellow('$1') + '/' + chalk.green(p.originalName) + `(${chalk.cyan(p.requestType.name)}) => ${chalk.cyan(p.responseType.name)}`) + '\n' +
-            indent(chalk.cyan(p.requestType.name) + ': ' + colorize(p.requestDeserialize(p.requestSerialize({}))), 2) + '\n' +
-            indent(chalk.cyan(p.responseType.name) + ': ' + colorize(p.responseDeserialize(p.responseSerialize({}))), 2)
+            indent(chalk.cyan(p.requestType.name) + ': ' + jsoncolor(p.requestDeserialize(p.requestSerialize({}))), 2) + '\n' +
+            indent(chalk.cyan(p.responseType.name) + ': ' + jsoncolor(p.responseDeserialize(p.responseSerialize({}))), 2)
         })
         .join('\n\n')
       )
@@ -190,7 +190,7 @@ yargs // eslint-disable-line
               input = JSON.parse(param)
             }
             run(FILES, rpc, input, host, resolve(process.cwd(), include), ca, key, cert)
-              .then(r => { console.log(colorize(JSON.stringify(r, null, 2))) })
+              .then(r => { console.log(jsoncolor(r)) })
               .catch(e => {
                 console.error(chalk.red(e))
                 process.exit(1)
