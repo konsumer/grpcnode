@@ -58,9 +58,20 @@ const addImplementations = (proto, server, implementation, name = '', debug = tr
             if (debug) {
               console.log(`GRPC: ${chalk.yellow((new Date()).toISOString())} (${chalk.cyan(ctx.getPeer())}): ${formattedName}(${jsoncolor(ctx.request)})`)
             }
-            cb(null, res)
+            if (cb) {
+              cb(null, res)
+            }
           })
-          .catch(err => cb(err))
+          .catch(err => {
+            if (debug) {
+              console.error(chalk.red('ERROR'), err.message)
+            }
+            if (cb) {
+              cb(err)
+            } else {
+              ctx.emit('error', err)
+            }
+          })
       }
     } else {
       addImplementations(proto[i], server, implementation[i], `${name}.${i}`, debug)
@@ -103,6 +114,7 @@ const ls = (proto) => {
 // run a remote gRPC command
 const run = (files, rpc, input, host = 'localhost:50051', root, ca, key, cert) => {
   const credentials = getCredentials(ca, key, cert, false)
+  let hold = false
   for (let f in files) {
     const proto = grpc.load({file: files[f], root})
     const ns = rpc.split('/')[1]
@@ -111,16 +123,26 @@ const run = (files, rpc, input, host = 'localhost:50051', root, ca, key, cert) =
       const client = new Service(host, credentials)
       const mname = Object.keys(Service.service).filter(s => Service.service[s].path === rpc).pop()
       if (mname) {
-        return new Promise((resolve, reject) => {
-          client[mname](input, (err, res) => {
-            if (err) return reject(err)
-            return resolve(res)
+        // TODO: process.stdin for streaming input
+        if (client[mname].responseStream) {
+          const call = client[mname](input)
+          call.on('data', d => console.log(jsoncolor(d)))
+          hold = true
+          return Promise.resolve('')
+        } else {
+          return new Promise((resolve, reject) => {
+            client[mname](input, (err, res) => {
+              if (err) return reject(err)
+              return resolve(res)
+            })
           })
-        })
+        }
       }
     }
   }
-  return Promise.reject(new Error('Method not found.'))
+  if (!hold) {
+    return Promise.reject(new Error('Method not found.'))
+  }
 }
 
 yargs // eslint-disable-line
