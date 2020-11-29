@@ -2,8 +2,6 @@
 
 Full demo of my nodejs CLI tools for grpc
 
-[![screenshot](https://media.giphy.com/media/1fge4BuwiSZBwsO3wM/giphy.gif)](https://asciinema.org/a/kbkRnHTTRhjXj7YJe6k9mrdZe)
-
 It's meant to show to use all the CLI tools, with no code other than your endpoint implementation.
 
 ## usage

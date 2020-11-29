@@ -1,12 +1,8 @@
 # Simple node-based gRPC client/server
 
-[![Build Status](https://travis-ci.org/konsumer/grpc-dynamic-gateway.svg?branch=master)](https://travis-ci.org/konsumer/grpc-dynamic-gateway) [![Greenkeeper badge](https://badges.greenkeeper.io/konsumer/grpcnode.svg)](https://greenkeeper.io/)
-
 When you want a quick gRPC server or client, made with node.
 
 [![NPM](https://nodei.co/npm/grpcnode.png?compact=true)](https://nodei.co/npm/grpcnode/)
-
-[![screenshot](https://media.giphy.com/media/1fge4BuwiSZBwsO3wM/giphy.gif)](https://asciinema.org/a/kbkRnHTTRhjXj7YJe6k9mrdZe)
 
 ## cli
 

@@ -52,7 +52,7 @@ const addImplementations = (proto, server, implementation, name = '', debug = tr
       if (debug) {
         console.log(`${formattedName} added.`)
       }
-      handlers[ i ] = (ctx, cb) => {
+      handlers[i] = (ctx, cb) => {
         Promise.resolve(implementation[i](ctx))
           .then(res => {
             if (debug) {
@@ -86,7 +86,7 @@ const addImplementations = (proto, server, implementation, name = '', debug = tr
 const makeServer = (implementation, protoFiles, root, quiet) => {
   const server = new grpc.Server()
   protoFiles.forEach(file => {
-    const proto = grpc.load({file, root})
+    const proto = grpc.load({ file, root })
     addImplementations(proto, server, implementation, '', !quiet)
   })
   return server
@@ -115,8 +115,8 @@ const ls = (proto) => {
 const run = (files, rpc, input, host = 'localhost:50051', root, ca, key, cert) => {
   const credentials = getCredentials(ca, key, cert, false)
   let hold = false
-  for (let f in files) {
-    const proto = grpc.load({file: files[f], root})
+  for (const f in files) {
+    const proto = grpc.load({ file: files[f], root })
     const ns = rpc.split('/')[1]
     const Service = get(proto, ns)
     if (Service) {
@@ -152,7 +152,7 @@ yargs // eslint-disable-line
         .boolean('quiet')
         .describe('quiet', 'Suppress logs')
         .alias('quiet', 'q')
-        .example(`$0 server -I example/proto helloworld.proto example/helloworld.js`, 'Start a gRPC server')
+        .example('$0 server -I example/proto helloworld.proto example/helloworld.js', 'Start a gRPC server')
     },
     argv => {
       const files = (Array.isArray(argv.FILES) ? argv.FILES : [argv.FILES])
@@ -181,7 +181,7 @@ yargs // eslint-disable-line
       yargs
         .command('ls <FILES...>', 'List available services on the gRPC server', yargs => {
           yargs
-            .example(`$0 client ls -I example/proto helloworld.proto`, 'Get a list of available gRPCs')
+            .example('$0 client ls -I example/proto helloworld.proto', 'Get a list of available gRPCs')
         }, argv => {
           const files = (Array.isArray(argv.FILES) ? argv.FILES : [argv.FILES])
           const protoFiles = files.filter(n => extname(n) === '.proto')
@@ -189,7 +189,7 @@ yargs // eslint-disable-line
             error('You must set at least 1 proto IDL file.')
           }
           files.forEach(file => {
-            const proto = grpc.load({file, root: argv.include})
+            const proto = grpc.load({ file, root: argv.include })
             ls(proto)
           })
         })
@@ -198,8 +198,8 @@ yargs // eslint-disable-line
           yargs
             .describe('command', '[REQUIRED] The command you want to run')
             .alias('command', 'c')
-            .example(`$0 client run -I example/proto helloworld.proto -c '/helloworld.v1.Greeter/SayHello({"name": "David"})'`, 'Call gRPC with a parameter. Parameter should be JSON.')
-            .example(`$0 client run -I example/proto helloworld.proto -c '/helloworld.v1.Greeter/SayHello()'`, 'Call gRPC with no parameter.')
+            .example('$0 client run -I example/proto helloworld.proto -c \'/helloworld.v1.Greeter/SayHello({"name": "David"})\'', 'Call gRPC with a parameter. Parameter should be JSON.')
+            .example('$0 client run -I example/proto helloworld.proto -c \'/helloworld.v1.Greeter/SayHello()\'', 'Call gRPC with no parameter.')
         }, argv => {
           const { ca, key, cert, host, include, command, FILES } = argv
           if (!command) {
