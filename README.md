@@ -6,29 +6,27 @@ When you want a quick gRPC server or client, made with node.
 
 ## cli
 
-Install with `npm i -g grpcnode`.
+Install with `npm i -g grpcnode` or use it without installing, with `npx grpcnode`.
 
-Now, you can use it like this:
+Now, you can use it like this `grpcnode --help`:
 
 ```
 grpcnode <command>
 
 Commands:
-  grpcnode server <FILES...>  Start a gRPC server with your proto and javascript files
-  grpcnode client             Act as a client of a gRPC server
+  grpcnode server <FILES...>     Start a gRPC server with proto and js files
+  grpcnode ls <PROTO_FILES...>   List available services on the gRPC server
+  grpcnode run <PROTO_FILES...>  Call an RPC on the gRPC server
 
 Options:
-  --help         Show help                                           [boolean]
-  --ca           SSL CA cert
-  --key          SSL server key
-  --cert         SSL server certificate
-  -h, --host     The host/port to run the gRPC server on             [default: "localhost:50051"]
-  -v, --version  Show version number                                 [boolean]
-  -I, --include  Root include path (sorry only one root-path works)
+  -I, --include  Include proto search path                              [string]
+      --help     Show help                                             [boolean]
+  -v, --version  Show version number                                   [boolean]
 
 Examples:
-  grpcnode client --help  Get more help about the client command
-  grpcnode server --help  Get more help about the server command
+  grpcnode ls --help      Get help with listing gRPC commands
+  grpcnode run --help     Get help with running gRPC commands
+  grpcnode server --help  Get help with running a gRPC server
 ```
 
 ### ssl
@@ -60,15 +58,15 @@ grpcnode server --ca=ca.crt --key=server.key --cert=server.crt -I example/ examp
 And client, like this:
 
 ```
-grpcnode client run --ca=ca.crt --key=client.key --cert=client.crt -I example/proto helloworld.proto -c '/helloworld.v1.Greeter/SayGoodbye({"name":"World"})'
+grpcnode run --ca=ca.crt --key=client.key --cert=client.crt -I example/proto helloworld.proto -c '/helloworld.v1.Greeter/SayGoodbye({"name":"World"})'
 ```
 
 ### examples
 
 You can see an example project [here](https://github.com/konsumer/grpcnode/tree/master/example) that shows how to use all the CLI tools, with no code other than your endpoint implementation.
 
-- Get a list of methods/message-types: `grpcnode client ls -I ./example/proto helloworld.proto`
-- Start a server: `grpc-server -I example/ example/*.js example/*.proto` or `node server.js -I example/ example/helloworld.js helloworld.proto`
-- Run an RPC on server: `grpcnode server -I example/proto helloworld.proto example/helloworld.js`
+- Get a list of methods/message-types: `grpcnode ls -I ./example/proto helloworld.proto`
+- Run an RPC on server: `grpcnode run -I example/proto helloworld.proto --command '/helloworld.v1.Greeter/SayHello({"name": "David"})'`
+- Start a server: `grpcnode server -I example/proto helloworld.proto example/helloworld.js`
 
 

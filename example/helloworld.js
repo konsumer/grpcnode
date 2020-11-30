@@ -1,14 +1,14 @@
-module.exports = {
-  helloworld: {
-    v1: {
-      Greeter: {
-        SayHello: ({request: { name }}) => ({message: `Hello ${name}`}),
+const wait = ms => new Promise((resolve) => setTimeout(resolve, ms))
 
-        SayGoodbye: ({request: { name }}) => new Promise((resolve) => {
-          setTimeout(() => {
-            resolve({message: `Bye, ${name}`})
-          }, 1000)
-        })
+export const helloworld = {
+  v1: {
+    Greeter: {
+      SayHello: ({ request: { name } }) => ({ message: `Hello ${name}` }),
+
+      // here is a promise-returning async handler
+      SayGoodbye: async ({ request: { name } }) => {
+        await wait(1000)
+        return { message: `Bye, ${name}` }
       }
     }
   }

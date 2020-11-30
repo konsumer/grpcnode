@@ -1,53 +1,39 @@
 {
   "name": "grpcnode",
-  "version": "1.1.0",
-  "description": "CLI tool for working with gRPC in nodejs, dynamically",
+  "version": "2.0.0",
+  "description": "When you want a quick gRPC server or client, made with node.",
   "scripts": {
-    "build": "babel src -d build",
-    "prepublish": "npm run build"
+    "build": "microbundle --no-sourcemap -i src/cli.js -o dist --target node -f cjs && chmod +x dist/grpcnode.js"
   },
-  "bin": {
-    "grpcnode": "build/grpcnode.js"
-  },
-  "files": [
-    "build"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/konsumer/grpcnode.git"
   },
-  "author": "David Konsumer <konsumer@jetboystudio.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/konsumer/grpcnode/issues"
-  },
-  "homepage": "https://github.com/konsumer/grpcnode#readme",
   "keywords": [
     "grpc",
     "api",
     "protobuf"
   ],
-  "babel": {
-    "presets": [
-      "env",
-      "stage-3"
-    ],
-    "plugins": [
-      "shebang"
-    ]
+  "author": "David Konsumer <konsumer@jetboystudio.com> (http://konsumer.js.org/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/konsumer/grpcnode/issues"
   },
+  "homepage": "https://github.com/konsumer/grpcnode#readme",
   "dependencies": {
-    "chalk": "^3.0.0",
-    "grpc": "^1.10.1",
-    "indent": "0.0.2",
-    "jsoncolor": "0.0.2",
-    "lodash": "^4.17.5",
-    "yargs": "^13.1.0"
+    "@grpc/proto-loader": "^0.5.5",
+    "chalk": "^2.4.2",
+    "esm": "^3.2.25",
+    "grpc": "^1.24.4",
+    "indent": "^0.0.2",
+    "jsoncolor": "^0.0.2",
+    "lodash": "^4.17.20",
+    "yargs": "^16.1.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-plugin-shebang": "1.0.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-stage-3": "^6.24.1"
+    "microbundle": "^0.12.4"
+  },
+  "bin": {
+    "grpcnode": "dist/grpcnode.js"
   }
 }

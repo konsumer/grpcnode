@@ -1,28 +1,14 @@
 {
-  "name": "grpc-demo",
-  "version": "1.0.0",
-  "description": "Full demo of my nodejs CLI tools for grpc",
-  "main": "index.js",
+  "name": "grpcnode-example",
+  "private": true,
+  "version": "0.0.0",
   "scripts": {
-    "grpc": "grpcnode server -I ./proto helloworld.proto helloworld.js",
-    "gateway": "grpc-dynamic-gateway -I ./proto helloworld.proto",
-    "test": "grpcnode client run -I ./proto helloworld.proto -c '/helloworld.v1.Greeter/SayHello({\"name\": \"World\"})'",
-    "ls": "grpcnode client ls -I ./proto helloworld.proto",
-    "start": "npm-run-all -p grpc gateway"
+    "start": "grpcnode server -I proto helloworld.proto helloworld.js",
+    "test": "grpcnode run -I proto helloworld.proto -c '/helloworld.v1.Greeter/SayHello({\"name\":\"David\"})'"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/konsumer/grpc-demo.git"
-  },
-  "author": "David Konsumer <konsumer@jetboystudio.com> (http://konsumer.js.org)",
+  "author": "David Konsumer <konsumer@jetboystudio.com> (http://konsumer.js.org/)",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/konsumer/grpc-demo/issues"
-  },
-  "homepage": "https://github.com/konsumer/grpc-demo#readme",
   "dependencies": {
-    "grpc-dynamic-gateway": "0.4.0",
-    "grpcnode": "1.0.4",
-    "npm-run-all": "^4.1.2"
+    "grpcnode": "latest"
   }
 }
